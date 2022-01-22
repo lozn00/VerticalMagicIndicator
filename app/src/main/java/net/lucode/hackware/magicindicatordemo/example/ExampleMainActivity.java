@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import net.lucode.hackware.magicindicatordemo.R;
 
+import lozn.VerticalBadgeTabExampleActivity;
 import lozn.VerticalavigatorExampleActivity;
 
 public class ExampleMainActivity extends AppCompatActivity {
@@ -46,6 +47,9 @@ public class ExampleMainActivity extends AppCompatActivity {
                 break;
             case R.id.vertical_navigator:
                 startActivity(new Intent(this, VerticalavigatorExampleActivity.class));
+                break;
+            case R.id.vertical_badge_navigator:
+                startActivity(new Intent(this, VerticalBadgeTabExampleActivity.class));
                 break;
             default:
                 break;

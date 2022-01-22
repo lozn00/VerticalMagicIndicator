@@ -10,4 +10,5 @@
     <string name="random_page">random page</string>
     <string name="tab_with_custom_layout">load custom layout</string>
     <string name="vertical_navigator">vertical_navigator(lozn)</string>
+    <string name="vertical_badge_navigator">verticalbadge(lozn)</string>
 </resources>

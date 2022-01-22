@@ -75,6 +75,12 @@
             android:layout_height="wrap_content"
             android:onClick="onClick"
             android:text="@string/vertical_navigator" />
+        <Button
+            android:id="@+id/vertical_badge_navigator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="@string/vertical_badge_navigator" />
 
     </LinearLayout>
 

@@ -26,8 +26,23 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
     public static final int MODE_MATCH_EDGE = 0;   // 直线宽度 == title宽度 - 2 * mXOffset
     public static final int MODE_WRAP_CONTENT = 1;    // 直线宽度 == title内容宽度 - 2 * mXOffset
     public static final int MODE_EXACTLY = 2;  // 直线宽度 == mLineWidth
+    public static final float MATCH_PARENT = -1;
 
-    private int mMode;  // 默认为MODE_MATCH_EDGE模式
+    private int mMode = MODE_MATCH_EDGE;  // 默认为MODE_MATCH_EDGE模式
+
+    public interface  RectIntercept{
+        boolean onIntercept(boolean vertical, RectF rectF, PositionData current, PositionData next, int width, int height, float lineHeight, float lineWidth);
+    }
+
+    public RectIntercept get_rectIntercept() {
+        return _rectIntercept;
+    }
+
+    public void set_rectIntercept(RectIntercept _rectIntercept) {
+        this._rectIntercept = _rectIntercept;
+    }
+
+    RectIntercept _rectIntercept;
 
     // 控制动画
     private Interpolator mStartInterpolator = new LinearInterpolator();
@@ -78,8 +93,8 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
     private void init(Context context) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
-        mLineHeight = UIUtil.dip2px(context,3);// UIUtil.dip2px(context, vertical ? 10 : 3);
-        mLineWidth = UIUtil.dip2px(context,10);// UIUtil.dip2px(context, vertical ? 3 : 10);
+        mLineHeight = vertical ? UIUtil.dip2px(context, 10) : UIUtil.dip2px(context, 3);// UIUtil.dip2px(context, vertical ? 10 : 3);
+        mLineWidth = vertical ? UIUtil.dip2px(context, 1) : UIUtil.dip2px(context, 10);// UIUtil.dip2px(context, vertical ? 3 : 10);
     }
 
     @Override
@@ -93,6 +108,7 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
             return;
         }
 
+
         // 计算颜色
         if (mColors != null && mColors.size() > 0) {
             int currentColor = mColors.get(Math.abs(position) % mColors.size());
@@ -101,48 +117,80 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
             mPaint.setColor(color);
 
         }
-
+        if (mLineWidth == LinePagerIndicator.MATCH_PARENT) {
+            mLineWidth = getWidth();
+        }
+        if (mLineHeight == LinePagerIndicator.MATCH_PARENT) {
+            mLineWidth = getHeight();
+        }
         // 计算锚点位置
         PositionData current = FragmentContainerHelper.getImitativePositionData(mPositionDataList, position, vertical);
         PositionData next = FragmentContainerHelper.getImitativePositionData(mPositionDataList, position + 1, vertical);
+
+
+        if(_rectIntercept!=null){
+            if(_rectIntercept.onIntercept(vertical,mLineRect,current,next,getWidth(),getHeight(),getLineHeight(),getLineWidth())){
+                return;
+            }
+        }
 
         float leftX;
         float nextLeftX;
         float rightX;
         float nextRightX;
+
+        float topY = 0;
+        float nextTopY = 0;
+        float bottomY = 0;
+        float nextBottomY = 0;
         if (mMode == MODE_MATCH_EDGE) {
-            if (isVertical()) {
-                leftX = current.mTop + mXOffset;
-                nextLeftX = next.mTop + mXOffset;
-                rightX = current.mBottom - mXOffset;
-                nextRightX = next.mBottom - mXOffset;
+            /*
+                public static final int MODE_MATCH_EDGE = 0;   // 直线宽度 == title宽度 - 2 * mXOffset
+    public static final int MODE_WRAP_CONTENT = 1;    // 直线宽度 == title内容宽度 - 2 * mXOffset
+    public static final int MODE_EXACTLY = 2;  // 直线宽度 == mLineWidth
+             */
+            if (isVertical()) { // 直线宽度 == title宽度 - 2 * mXOffset
+                topY = current.mTop + mYOffset;
+                nextTopY = next.mTop + mYOffset;
+                bottomY = current.mBottom - mYOffset;
+                nextBottomY = next.mBottom - mYOffset;
+
+                leftX = current.mLeft + mXOffset;
+                nextLeftX = next.mLeft + mXOffset;
+                rightX = current.mRight - mXOffset;
+                nextRightX = next.mRight - mXOffset;
             } else {
 
                 leftX = current.mLeft + mXOffset;
                 nextLeftX = next.mLeft + mXOffset;
                 rightX = current.mRight - mXOffset;
                 nextRightX = next.mRight - mXOffset;
-            }
-        } else if (mMode == MODE_WRAP_CONTENT) {
-            if (isVertical()) {
-                leftX = current.mContentTop + mXOffset;
-                nextLeftX = next.mContentTop + mXOffset;
-                rightX = current.mContentBottom - mXOffset;
-                nextRightX = next.mContentBottom - mXOffset;
-            } else {
 
-                leftX = current.mContentLeft + mXOffset;
-                nextLeftX = next.mContentLeft + mXOffset;
-                rightX = current.mContentRight - mXOffset;
-                nextRightX = next.mContentRight - mXOffset;
             }
-        } else {    // MODE_EXACTLY
-            if (isVertical()) {
-                leftX = current.mTop + (current.height() - mLineWidth) / 2;
-                rightX = current.mTop + (current.height() + mLineWidth) / 2;
+        } else if (mMode == MODE_WRAP_CONTENT) {// 直线宽度 == title内容宽度 - 2 * mXOffset
+            topY = current.mContentTop + mYOffset;
+            nextTopY = next.mContentTop + mYOffset;
+            bottomY = current.mContentBottom - mYOffset;
+            nextBottomY = next.mContentBottom - mYOffset;
 
-                nextLeftX = next.mTop + (next.height() - mLineWidth) / 2;
-                nextRightX = next.mTop + (next.height() + mLineWidth) / 2;
+            leftX = current.mContentLeft + mXOffset;
+            nextLeftX = next.mContentLeft + mXOffset;
+            rightX = current.mContentRight - mXOffset;
+            nextRightX = next.mContentRight - mXOffset;
+        } else if (mMode == MODE_EXACTLY || true) {   // 直线宽度 == mLineWidth
+            if (isVertical()) {
+                topY = current.mTop + (current.height() - mLineHeight) / 2;
+                bottomY = current.mTop + (current.height() + mLineHeight) / 2;
+                nextTopY = next.mTop + (next.height() - mLineHeight) / 2;
+                nextBottomY = next.mTop + (next.height() + mLineHeight) / 2;
+
+
+                leftX = current.mLeft + (current.width() - mLineWidth) / 2;
+                rightX = current.mLeft + (current.width() + mLineWidth) / 2;
+                nextLeftX = next.mLeft + (next.width() - mLineWidth) / 2;
+                nextRightX = next.mLeft + (next.width() + mLineWidth) / 2;
+
+
             } else {
                 leftX = current.mLeft + (current.width() - mLineWidth) / 2;
                 rightX = current.mLeft + (current.width() + mLineWidth) / 2;
@@ -152,27 +200,34 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
             }
         }
 
-        if (mMode != MODE_MATCH_EDGE && vertical) {
+  /*      if (mMode != MODE_MATCH_EDGE && vertical) {
             mLineRect.top = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
             mLineRect.bottom = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
-            mLineRect.left = getWidth() - mLineHeight - mXOffset;//这句话在右边显示竖线的时候很重要
-            mLineRect.right = getWidth() - mYOffset;
-        } else {
-            if (vertical) {
-                mLineRect.top = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
-                mLineRect.bottom = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
-//            mLineRect.left = getWidth() - mLineHeight - mYOffset;
-                mLineRect.right = getWidth() - mYOffset;
+            mLineRect.left = getWidth() - mLineWidth - mXOffset;//这句话在右边显示竖线的时候很重要
+            mLineRect.right = getWidth() - mXOffset;
+        } else {*/
+        if (vertical) {
+
+            mLineRect.left = getWidth() - mLineWidth - mXOffset;
+            mLineRect.right = getWidth() - mXOffset;
+            if (mMode == MODE_MATCH_EDGE) {
+            } else if (mMode == MODE_WRAP_CONTENT) {
+
 
             } else {
-                mLineRect.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
-                mLineRect.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
-                mLineRect.top = getHeight() - mLineHeight - mYOffset;
-                mLineRect.bottom = getHeight() - mYOffset;
-
             }
+                mLineRect.top = topY + (nextTopY - topY) * mStartInterpolator.getInterpolation(positionOffset);
+                mLineRect.bottom = bottomY + (nextBottomY - bottomY) * mEndInterpolator.getInterpolation(positionOffset);
+
+        } else {
+            mLineRect.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+            mLineRect.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
+            mLineRect.top = getHeight() - mLineHeight - mYOffset;
+            mLineRect.bottom = getHeight() - mYOffset;
 
         }
+
+//        }
 
         invalidate();
     }

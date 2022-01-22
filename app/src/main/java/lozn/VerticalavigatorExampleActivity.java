@@ -79,7 +79,7 @@ public class VerticalavigatorExampleActivity extends AppCompatActivity {
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
                 linePagerIndicator.setMode(LinePagerIndicator.MODE_EXACTLY);
-                linePagerIndicator.setLineWidth(UIUtil.dip2px(context, 10));
+                linePagerIndicator.setLineHeight(UIUtil.dip2px(context, 10));//只有行高起作用
                 linePagerIndicator.setColors(Color.WHITE);
                 return linePagerIndicator;
             }
@@ -134,7 +134,8 @@ public class VerticalavigatorExampleActivity extends AppCompatActivity {
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context,true);
                 linePagerIndicator.setMode(LinePagerIndicator.MODE_EXACTLY);
-                linePagerIndicator.setLineWidth(UIUtil.dip2px(context, 10));
+                linePagerIndicator.setLineWidth(UIUtil.dip2px(context, 2));
+                linePagerIndicator.setLineHeight(UIUtil.dip2px(context, 10));
                 linePagerIndicator.setColors(Color.WHITE);
                 return linePagerIndicator;
             }
@@ -226,12 +227,12 @@ public class VerticalavigatorExampleActivity extends AppCompatActivity {
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context,true);
-                float navigatorHeight = context.getResources().getDimension(R.dimen.common_navigator_height);
+                float navigatorWidth = context.getResources().getDimension(R.dimen.common_navigator_width);
                 float borderWidth = UIUtil.dip2px(context, 1);
-                float lineHeight = navigatorHeight - 2 * borderWidth;
-                indicator.setLineHeight(lineHeight);
+                float lineHeight = navigatorWidth - 2 * borderWidth;
+                indicator.setLineWidth(LinePagerIndicator.MATCH_PARENT);
                 indicator.setRoundRadius(lineHeight / 2);
-                indicator.setYOffset(borderWidth);
+                indicator.setXOffset(borderWidth);
                 indicator.setColors(Color.parseColor("#bc2a2a"));
                 return indicator;
             }

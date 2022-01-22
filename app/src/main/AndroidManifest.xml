@@ -44,6 +44,9 @@
         <activity
             android:name="lozn.VerticalavigatorExampleActivity"
             android:label="@string/vertical_navigator" />
+        <activity
+            android:name="lozn.VerticalBadgeTabExampleActivity"
+            android:label="@string/vertical_badge_navigator" />
 
         <activity
             android:name=".example.LoadCustomLayoutExampleActivity"
