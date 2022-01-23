@@ -49,6 +49,10 @@
             android:label="@string/vertical_badge_navigator" />
 
         <activity
+            android:name="lozn.VerticalScrollableTabExampleActivity"
+            android:label="VerticalScrollableTab" />
+<!--            android:screenOrientation="landscape"-->
+        <activity
             android:name=".example.LoadCustomLayoutExampleActivity"
             android:label="@string/tab_with_custom_layout" />
 

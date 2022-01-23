@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import net.lucode.hackware.magicindicatordemo.R;
 
 import lozn.VerticalBadgeTabExampleActivity;
+import lozn.VerticalScrollableTabExampleActivity;
 import lozn.VerticalavigatorExampleActivity;
 
 public class ExampleMainActivity extends AppCompatActivity {
@@ -23,6 +24,9 @@ public class ExampleMainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.scrollable_tab:
                 startActivity(new Intent(this, ScrollableTabExampleActivity.class));
+                break;
+            case R.id.vertical_scrollable_tab:
+                startActivity(new Intent(this, VerticalScrollableTabExampleActivity.class));
                 break;
             case R.id.fixed_tab:
                 startActivity(new Intent(this, FixedTabExampleActivity.class));

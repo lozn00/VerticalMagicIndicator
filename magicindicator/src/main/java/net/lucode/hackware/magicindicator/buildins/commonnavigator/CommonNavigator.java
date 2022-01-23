@@ -158,7 +158,7 @@ public class CommonNavigator extends FrameLayout implements IPagerNavigator, Nav
 
         mTitleContainer = (LinearLayout) root.findViewById(R.id.title_container);
         if (_VerticalMode) {
-            mTitleContainer.setPadding(mLeftPadding, mLeftPadding, mRightPadding, mRightPadding);
+            mTitleContainer.setPadding(0, mLeftPadding, mRightPadding, 0);
         } else {
             mTitleContainer.setPadding(mLeftPadding, 0, mRightPadding, 0);
 

@@ -11,4 +11,5 @@
     <string name="tab_with_custom_layout">load custom layout</string>
     <string name="vertical_navigator">vertical_navigator(lozn)</string>
     <string name="vertical_badge_navigator">verticalbadge(lozn)</string>
+    <string name="vertical_scrollable_tab">vertical scrollable</string>
 </resources>

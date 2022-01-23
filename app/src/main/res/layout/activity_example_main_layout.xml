@@ -20,6 +20,12 @@
             android:layout_height="wrap_content"
             android:onClick="onClick"
             android:text="@string/scrollable_tab" />
+        <Button
+            android:id="@+id/vertical_scrollable_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="@string/vertical_scrollable_tab" />
 
         <Button
             android:id="@+id/fixed_tab"

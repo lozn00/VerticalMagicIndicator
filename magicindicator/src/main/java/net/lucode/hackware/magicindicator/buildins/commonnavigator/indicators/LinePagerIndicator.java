@@ -31,14 +31,14 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
     private int mMode = MODE_MATCH_EDGE;  // 默认为MODE_MATCH_EDGE模式
 
     public interface  RectIntercept{
-        boolean onIntercept(boolean vertical, RectF rectF, PositionData current, PositionData next, int width, int height, float lineHeight, float lineWidth);
+        boolean onIntercept(LinePagerIndicator linePagerIndicator, boolean vertical, RectF rectF, float positionOffset, int positionOffsetPixels, int position, PositionData current, PositionData next, Interpolator mStartInterpolator, Interpolator mEndInterpolator);
     }
 
-    public RectIntercept get_rectIntercept() {
+    public RectIntercept getRectIntercept() {
         return _rectIntercept;
     }
 
-    public void set_rectIntercept(RectIntercept _rectIntercept) {
+    public void setRectIntercept(RectIntercept _rectIntercept) {
         this._rectIntercept = _rectIntercept;
     }
 
@@ -94,7 +94,7 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
         mLineHeight = vertical ? UIUtil.dip2px(context, 10) : UIUtil.dip2px(context, 3);// UIUtil.dip2px(context, vertical ? 10 : 3);
-        mLineWidth = vertical ? UIUtil.dip2px(context, 1) : UIUtil.dip2px(context, 10);// UIUtil.dip2px(context, vertical ? 3 : 10);
+        mLineWidth = vertical ? UIUtil.dip2px(context, 5) : UIUtil.dip2px(context, 10);// UIUtil.dip2px(context, vertical ? 3 : 10);
     }
 
     @Override
@@ -129,7 +129,8 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
 
 
         if(_rectIntercept!=null){
-            if(_rectIntercept.onIntercept(vertical,mLineRect,current,next,getWidth(),getHeight(),getLineHeight(),getLineWidth())){
+            if(_rectIntercept.onIntercept(this,vertical,mLineRect,positionOffset,positionOffsetPixels,position,current,next,mStartInterpolator,mEndInterpolator)){
+                invalidate();
                 return;
             }
         }
@@ -183,7 +184,6 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
                 bottomY = current.mTop + (current.height() + mLineHeight) / 2;
                 nextTopY = next.mTop + (next.height() - mLineHeight) / 2;
                 nextBottomY = next.mTop + (next.height() + mLineHeight) / 2;
-
 
                 leftX = current.mLeft + (current.width() - mLineWidth) / 2;
                 rightX = current.mLeft + (current.width() + mLineWidth) / 2;

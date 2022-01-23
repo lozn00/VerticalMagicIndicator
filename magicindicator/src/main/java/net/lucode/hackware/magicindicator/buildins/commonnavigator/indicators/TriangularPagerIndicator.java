@@ -39,6 +39,12 @@ public class TriangularPagerIndicator extends View implements IPagerIndicator {
         init(context);
     }
 
+    public TriangularPagerIndicator(Context context, boolean vertical) {
+        super(context);
+        this.vertical = vertical;
+        init(context);
+    }
+
     private void init(Context context) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
@@ -50,20 +56,40 @@ public class TriangularPagerIndicator extends View implements IPagerIndicator {
     @Override
     protected void onDraw(Canvas canvas) {
         mPaint.setColor(mLineColor);
-        if (mReverse) {
-            canvas.drawRect(0, getHeight() - mYOffset - mTriangleHeight, getWidth(), getHeight() - mYOffset - mTriangleHeight + mLineHeight, mPaint);
-        } else {
-            canvas.drawRect(0, getHeight() - mLineHeight - mYOffset, getWidth(), getHeight() - mYOffset, mPaint);
-        }
-        mPath.reset();
-        if (mReverse) {
-            mPath.moveTo(mAnchorX - mTriangleWidth / 2, getHeight() - mYOffset - mTriangleHeight);
-            mPath.lineTo(mAnchorX, getHeight() - mYOffset);
-            mPath.lineTo(mAnchorX + mTriangleWidth / 2, getHeight() - mYOffset - mTriangleHeight);
-        } else {
-            mPath.moveTo(mAnchorX - mTriangleWidth / 2, getHeight() - mYOffset);
-            mPath.lineTo(mAnchorX, getHeight() - mTriangleHeight - mYOffset);
-            mPath.lineTo(mAnchorX + mTriangleWidth / 2, getHeight() - mYOffset);
+        if(isVertical()){
+            if (mReverse) {
+                canvas.drawRect(getWidth() - mYOffset - mTriangleHeight, 0,getWidth() - mYOffset - mTriangleHeight + mLineHeight,getHeight(), mPaint);
+            } else {
+                canvas.drawRect(getWidth() - mLineHeight - mYOffset, 0,getWidth() - mYOffset,getHeight(),  mPaint);
+            }
+            mPath.reset();
+
+            if (mReverse) {
+                mPath.moveTo(getWidth() - mYOffset - mTriangleHeight,mAnchorX - mTriangleWidth / 2);
+                mPath.lineTo(getWidth() - mYOffset,mAnchorX);
+                mPath.lineTo(getWidth() - mYOffset - mTriangleHeight,mAnchorX + mTriangleWidth / 2);
+            } else {
+                mPath.moveTo(getWidth() - mYOffset,mAnchorX - mTriangleWidth / 2);
+                mPath.lineTo(getWidth() - mTriangleHeight - mYOffset,mAnchorX);
+                mPath.lineTo(getWidth() - mYOffset,mAnchorX + mTriangleWidth / 2);
+            }
+        }else{
+            if (mReverse) {
+                canvas.drawRect(0, getHeight() - mYOffset - mTriangleHeight, getWidth(), getHeight() - mYOffset - mTriangleHeight + mLineHeight, mPaint);
+            } else {
+                canvas.drawRect(0, getHeight() - mLineHeight - mYOffset, getWidth(), getHeight() - mYOffset, mPaint);
+            }
+            mPath.reset();
+
+            if (mReverse) {
+                mPath.moveTo(mAnchorX - mTriangleWidth / 2, getHeight() - mYOffset - mTriangleHeight);
+                mPath.lineTo(mAnchorX, getHeight() - mYOffset);
+                mPath.lineTo(mAnchorX + mTriangleWidth / 2, getHeight() - mYOffset - mTriangleHeight);
+            } else {
+                mPath.moveTo(mAnchorX - mTriangleWidth / 2, getHeight() - mYOffset);
+                mPath.lineTo(mAnchorX, getHeight() - mTriangleHeight - mYOffset);
+                mPath.lineTo(mAnchorX + mTriangleWidth / 2, getHeight() - mYOffset);
+            }
         }
         mPath.close();
         canvas.drawPath(mPath, mPaint);
@@ -79,10 +105,19 @@ public class TriangularPagerIndicator extends View implements IPagerIndicator {
         PositionData current = FragmentContainerHelper.getImitativePositionData(mPositionDataList, position);
         PositionData next = FragmentContainerHelper.getImitativePositionData(mPositionDataList, position + 1);
 
-        float leftX = current.mLeft + (current.mRight - current.mLeft) / 2;
-        float rightX = next.mLeft + (next.mRight - next.mLeft) / 2;
 
-        mAnchorX = leftX + (rightX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+        if (isVertical()) {
+            float leftX = current.mTop + (current.mBottom - current.mTop) / 2;
+            float rightX = next.mTop + (next.mBottom - next.mTop) / 2;
+
+            mAnchorX = leftX + (rightX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+        } else {
+
+            float leftX = current.mLeft + (current.mRight - current.mLeft) / 2;
+            float rightX = next.mLeft + (next.mRight - next.mLeft) / 2;
+
+            mAnchorX = leftX + (rightX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+        }
 
         invalidate();
     }
@@ -142,6 +177,16 @@ public class TriangularPagerIndicator extends View implements IPagerIndicator {
             mStartInterpolator = new LinearInterpolator();
         }
     }
+
+    public boolean isVertical() {
+        return vertical;
+    }
+
+    public void setVertical(boolean vertical) {
+        this.vertical = vertical;
+    }
+
+    boolean vertical;
 
     public boolean isReverse() {
         return mReverse;

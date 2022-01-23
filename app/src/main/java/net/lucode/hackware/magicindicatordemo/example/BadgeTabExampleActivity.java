@@ -2,12 +2,14 @@ package net.lucode.hackware.magicindicatordemo.example;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +25,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNav
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.LinePagerIndicator;
+import net.lucode.hackware.magicindicator.buildins.commonnavigator.model.PositionData;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ClipPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.SimplePagerTitleView;
@@ -293,12 +296,9 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
     }
 
 
-
-
-
     private void initMagicIndicator1V() {
         MagicIndicator magicIndicator = (MagicIndicator) findViewById(R.id.magic_indicator1_vertical);
-        CommonNavigator commonNavigator = new CommonNavigator(this,true);
+        CommonNavigator commonNavigator = new CommonNavigator(this, true);
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
             public int getCount() {
@@ -307,7 +307,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
             @Override
             public IPagerTitleView getTitleView(Context context, final int index) {
-                final BadgePagerTitleView badgePagerTitleView = new BadgePagerTitleView(context,true);
+                final BadgePagerTitleView badgePagerTitleView = new BadgePagerTitleView(context, true);
 
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(mDataList.get(index));
@@ -352,7 +352,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
             @Override
             public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context,true);
+                LinePagerIndicator indicator = new LinePagerIndicator(context, true);
                 indicator.setColors(Color.parseColor("#40c4ff"));
                 return indicator;
             }
@@ -368,7 +368,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
     private void initMagicIndicator2V() {
         MagicIndicator magicIndicator = (MagicIndicator) findViewById(R.id.magic_indicator2_vertical);
         magicIndicator.setBackgroundColor(Color.WHITE);
-        CommonNavigator commonNavigator = new CommonNavigator(this,true);
+        CommonNavigator commonNavigator = new CommonNavigator(this, true);
         commonNavigator.setAdjustMode(true);
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
@@ -378,7 +378,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
             @Override
             public IPagerTitleView getTitleView(Context context, final int index) {
-                BadgePagerTitleView badgePagerTitleView = new BadgePagerTitleView(context,true);
+                BadgePagerTitleView badgePagerTitleView = new BadgePagerTitleView(context, true);
 
                 SimplePagerTitleView simplePagerTitleView = new ScaleTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(mDataList.get(index));
@@ -409,12 +409,25 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
             @Override
             public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context,true);
+                LinePagerIndicator indicator = new LinePagerIndicator(context, true);
+                indicator.setColors(Color.parseColor("#f57c00"));
+                indicator.setLineWidth(UIUtil.dip2px(context,5));
                 indicator.setStartInterpolator(new AccelerateInterpolator());
                 indicator.setEndInterpolator(new DecelerateInterpolator(1.6f));
+                indicator.setRectIntercept(new LinePagerIndicator.RectIntercept() {
+                    @Override
+                    public boolean onIntercept(LinePagerIndicator linePagerIndicator, boolean vertical, RectF rectF, float positionOffset, int positionOffsetPixels, int position, PositionData current, PositionData next, Interpolator mStartInterpolator, Interpolator mEndInterpolator) {
+                        rectF.left =0;
+                        rectF.right =linePagerIndicator.getLineWidth();
+                        rectF.top = current.mTop + (next.mTop -  current.mTop) * mStartInterpolator.getInterpolation(positionOffset);
+                        rectF.bottom = current.mBottom + (next.mBottom - current.mBottom ) * mEndInterpolator.getInterpolation(positionOffset);
+
+
+                        return true;
+                    }
+                });
                 indicator.setYOffset(UIUtil.dip2px(context, 39));
                 indicator.setLineHeight(UIUtil.dip2px(context, 1));
-                indicator.setColors(Color.parseColor("#f57c00"));
                 return indicator;
             }
 
@@ -436,7 +449,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
     private void initMagicIndicator3V() {
         MagicIndicator magicIndicator = (MagicIndicator) findViewById(R.id.magic_indicator3_vertical);
         magicIndicator.setBackgroundResource(R.drawable.round_indicator_bg);
-        CommonNavigator commonNavigator = new CommonNavigator(this,true);
+        CommonNavigator commonNavigator = new CommonNavigator(this, true);
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
             public int getCount() {
@@ -447,7 +460,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
             public IPagerTitleView getTitleView(Context context, final int index) {
                 BadgePagerTitleView badgePagerTitleView = new BadgePagerTitleView(context);
 
-                ClipPagerTitleView clipPagerTitleView = new ClipPagerTitleView(context,true);
+                ClipPagerTitleView clipPagerTitleView = new ClipPagerTitleView(context, true);
                 clipPagerTitleView.setText(mDataList.get(index));
                 clipPagerTitleView.setTextColor(Color.parseColor("#e94220"));
                 clipPagerTitleView.setClipColor(Color.WHITE);
@@ -457,6 +470,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
                         mViewPager.setCurrentItem(index);
                     }
                 });
+
                 badgePagerTitleView.setInnerPagerTitleView(clipPagerTitleView);
 
                 return badgePagerTitleView;
@@ -464,7 +478,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
             @Override
             public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context,true);
+                LinePagerIndicator indicator = new LinePagerIndicator(context, true);
                 indicator.setMode(LinePagerIndicator.MODE_EXACTLY);
                 float navigatorHeight = context.getResources().getDimension(R.dimen.common_navigator_height);
                 float borderWidth = UIUtil.dip2px(context, 1);
@@ -473,6 +487,18 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
                 indicator.setRoundRadius(lineHeight / 2);
                 indicator.setXOffset(borderWidth);
                 indicator.setColors(Color.parseColor("#bc2a2a"));
+
+
+                indicator.setRectIntercept(new LinePagerIndicator.RectIntercept() {
+                    @Override
+                    public boolean onIntercept(LinePagerIndicator linePagerIndicator, boolean vertical, RectF rectF, float positionOffset, int positionOffsetPixels, int position, PositionData current, PositionData next, Interpolator mStartInterpolator, Interpolator mEndInterpolator) {
+                        rectF.left =0;
+                        rectF.right =linePagerIndicator.getWidth();
+                        rectF.top = current.mTop + (next.mTop -  current.mTop) * mStartInterpolator.getInterpolation(positionOffset);
+                        rectF.bottom = current.mBottom + (next.mBottom - current.mBottom ) * mEndInterpolator.getInterpolation(positionOffset);
+                        return true;
+                    }
+                });
                 return indicator;
             }
         });
@@ -482,7 +508,7 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
     private void initMagicIndicator4V() {
         MagicIndicator magicIndicator = (MagicIndicator) findViewById(R.id.magic_indicator4_vertical);
-        CommonNavigator commonNavigator = new CommonNavigator(this,true);
+        CommonNavigator commonNavigator = new CommonNavigator(this, true);
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
 
             @Override
@@ -511,8 +537,19 @@ public class BadgeTabExampleActivity extends AppCompatActivity {
 
             @Override
             public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context,true);
+                LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context, true);
                 linePagerIndicator.setColors(Color.WHITE);
+                linePagerIndicator.setLineWidth( UIUtil.dip2px(context, 5));
+                linePagerIndicator.setRectIntercept(new LinePagerIndicator.RectIntercept() {
+                    @Override
+                    public boolean onIntercept(LinePagerIndicator indicator, boolean vertical, RectF rectF, float positionOffset, int positionOffsetPixels, int position, PositionData current, PositionData next, Interpolator mStartInterpolator, Interpolator mEndInterpolator) {
+                        rectF.left =indicator.getWidth()-indicator.getLineWidth();
+                        rectF.right= indicator.getWidth();
+                        rectF.top = current.mTop + (next.mTop -  current.mTop) * mStartInterpolator.getInterpolation(positionOffset);
+                        rectF.bottom = current.mBottom + (next.mBottom - current.mBottom ) * mEndInterpolator.getInterpolation(positionOffset);
+                        return true;
+                    }
+                });
                 return linePagerIndicator;
             }
         });

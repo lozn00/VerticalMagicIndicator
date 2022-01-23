@@ -36,7 +36,15 @@ public class WrapPagerIndicator extends View implements IPagerIndicator {
     private boolean mRoundRadiusSet;
 
     public WrapPagerIndicator(Context context) {
+
         super(context);
+        init(context);
+
+    }
+
+    public WrapPagerIndicator(Context context, boolean vertical) {
+        super(context);
+        this.vertical = vertical;
         init(context);
     }
 
@@ -45,7 +53,22 @@ public class WrapPagerIndicator extends View implements IPagerIndicator {
         mPaint.setStyle(Paint.Style.FILL);
         mVerticalPadding = UIUtil.dip2px(context, 6);
         mHorizontalPadding = UIUtil.dip2px(context, 10);
+        if (vertical) {
+            int temp = mVerticalPadding;
+            mVerticalPadding = mHorizontalPadding;
+            mVerticalPadding = temp;
+        }
     }
+
+    public boolean isVertical() {
+        return vertical;
+    }
+
+    public void setVertical(boolean vertical) {
+        this.vertical = vertical;
+    }
+
+    boolean vertical;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -63,10 +86,22 @@ public class WrapPagerIndicator extends View implements IPagerIndicator {
         PositionData current = FragmentContainerHelper.getImitativePositionData(mPositionDataList, position);
         PositionData next = FragmentContainerHelper.getImitativePositionData(mPositionDataList, position + 1);
 
-        mRect.left = current.mContentLeft - mHorizontalPadding + (next.mContentLeft - current.mContentLeft) * mEndInterpolator.getInterpolation(positionOffset);
-        mRect.top = current.mContentTop - mVerticalPadding;
-        mRect.right = current.mContentRight + mHorizontalPadding + (next.mContentRight - current.mContentRight) * mStartInterpolator.getInterpolation(positionOffset);
-        mRect.bottom = current.mContentBottom + mVerticalPadding;
+
+        if (vertical) {
+            mRect.top = current.mTop - mVerticalPadding + (next.mTop - current.mTop) * mEndInterpolator.getInterpolation(positionOffset);
+            mRect.bottom = current.mBottom + mVerticalPadding + (next.mBottom - current.mBottom) * mStartInterpolator.getInterpolation(positionOffset);
+
+            //TODO mContentTop是有问题的。
+            mRect.left = current.mContentLeft - mHorizontalPadding;
+            mRect.right = current.mContentRight + mHorizontalPadding;
+
+        } else {
+
+            mRect.left = current.mContentLeft - mHorizontalPadding + (next.mContentLeft - current.mContentLeft) * mEndInterpolator.getInterpolation(positionOffset);
+            mRect.right = current.mContentRight + mHorizontalPadding + (next.mContentRight - current.mContentRight) * mStartInterpolator.getInterpolation(positionOffset);
+            mRect.top = current.mContentTop - mVerticalPadding;
+            mRect.bottom = current.mContentBottom + mVerticalPadding;
+        }
 
         if (!mRoundRadiusSet) {
             mRoundRadius = mRect.height() / 2;
