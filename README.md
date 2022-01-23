@@ -1,12 +1,59 @@
 # VerticalMagicIndicator
+基于 MagicIndicator 改版，使其更灵活，更方便的定制线性指示器，使其能够垂直滚动。垂直tab选项卡，这样就能够在同一个控件的情况下适配横屏竖屏的目的，竖屏大多数指示器已经被我适配实现了。
 
+![img.png](img.png)
+
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
+![img_4.png](img_4.png)
+![img_5.png](img_5.png)
+![img_6.png](img_6.png)
 A powerful, customizable and extensible ViewPager indicator framework. As the best alternative of ViewPagerIndicator, TabLayout and PagerSlidingTabStrip.
 lozn adapt vertical 
+
+``` 
+        CommonNavigator commonNavigator = new CommonNavigator(this,true);
+```
+
+``` 
+  LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context,true);
+```
+``` 
+        ScaleCircleNavigator scaleCircleNavigator = new ScaleCircleNavigator(this);
+```
+``` 
+      @Override
+            public IPagerIndicator getIndicator(Context context) {
+                LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context, true);
+                linePagerIndicator.setColors(Color.WHITE);
+                linePagerIndicator.setLineWidth( UIUtil.dip2px(context, 5));
+                linePagerIndicator.setRectIntercept(new LinePagerIndicator.RectIntercept() {
+                    @Override
+                    public boolean onIntercept(LinePagerIndicator indicator, boolean vertical, RectF rectF, float positionOffset, int positionOffsetPixels, int position, PositionData current, PositionData next, Interpolator mStartInterpolator, Interpolator mEndInterpolator) {
+                        rectF.left =indicator.getWidth()-indicator.getLineWidth();
+                        rectF.right= indicator.getWidth();
+                        rectF.top = current.mTop + (next.mTop -  current.mTop) * mStartInterpolator.getInterpolation(positionOffset);
+                        rectF.bottom = current.mBottom + (next.mBottom - current.mBottom ) * mEndInterpolator.getInterpolation(positionOffset);
+                        return true;
+                    }
+                });
+                return linePagerIndicator;
+            }
+
+```
+
+
+下面的文档 与垂直滚动无关
+
+
 [![](https://jitpack.io/v/hackware1993/MagicIndicator.svg)](https://jitpack.io/#hackware1993/MagicIndicator)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MagicIndicator-green.svg?style=true)](https://android-arsenal.com/details/1/4252)
 [![Codewake](https://www.codewake.com/badges/ask_question.svg)](https://www.codewake.com/p/magicindicator)
 
 ![magicindicaotor.gif](https://github.com/hackware1993/MagicIndicator/blob/master/magicindicator.gif)
+
+
 
 # Usage
 
@@ -216,24 +263,6 @@ Visit [My Blog](http://hackware.lucode.net) for more articles about MagicIndicat
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
   ```
-
-# More
-lozn 适配了几个垂直指示器。
- VerticalavigatorExampleActivity
-具体可以编译demo进行查看
-
-QQ:35068264 qssq521@gmail.com
-``` 
-        CommonNavigator commonNavigator = new CommonNavigator(this,true);
-```
-
-``` 
-  LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context,true);
-```
-``` 
-        ScaleCircleNavigator scaleCircleNavigator = new ScaleCircleNavigator(this);
-```
-
 ![img.png](img.png)
 
 ![img_1.png](img_1.png)
@@ -242,3 +271,10 @@ QQ:35068264 qssq521@gmail.com
 ![img_4.png](img_4.png)
 ![img_5.png](img_5.png)
 ![img_6.png](img_6.png)
+
+# More
+lozn 适配了几个垂直指示器。
+ VerticalavigatorExampleActivity
+具体可以编译demo进行查看
+
+QQ:35068264 qssq521@gmail.com
